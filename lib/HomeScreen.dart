@@ -1,5 +1,6 @@
 import 'package:doctor_appointment/AllDoctorScreen.dart';
 import 'package:doctor_appointment/AllHospitalScreen.dart';
+import 'package:doctor_appointment/AppSideMenu.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
 
   final List<Map<String, String>> banners = [
@@ -66,6 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      key: _scaffoldKey,
+      drawer: const AppSideMenu(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -110,14 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   "Indore, India",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                Icon(Icons.keyboard_arrow_down),
+                //Icon(Icons.keyboard_arrow_down),
               ],
             ),
           ],
         ),
+
         CircleAvatar(
-          backgroundColor: Colors.grey.shade200,
-          child: const Icon(Icons.notifications_none),
+            backgroundColor: Colors.grey.shade200,
+            child: IconButton(
+              onPressed: () {
+                _scaffoldKey.currentState!.openDrawer();
+              }, icon: Icon(Icons.menu),)
         ),
       ],
     );

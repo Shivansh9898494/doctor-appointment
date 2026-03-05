@@ -1,3 +1,7 @@
+import 'package:doctor_appointment/AllAppointmentScreen.dart';
+import 'package:doctor_appointment/AllDoctorScreen.dart';
+import 'package:doctor_appointment/AllHospitalScreen.dart';
+import 'package:doctor_appointment/ProfileScreen.dart';
 import 'package:flutter/material.dart';
 
 class AppSideMenu extends StatelessWidget {
@@ -57,27 +61,53 @@ class AppSideMenu extends StatelessWidget {
             _menuItem(
               icon: Icons.home_outlined,
               title: "Home",
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
             _menuItem(
               icon: Icons.person_outline,
               title: "My Profile",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()
+                  ),
+                );
+              },
             ),
             _menuItem(
               icon: Icons.calendar_month_outlined,
               title: "Appointments",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                  MaterialPageRoute(builder: (context) => Allappointmentscreen(),
+                  ),
+                );
+              },
             ),
             _menuItem(
               icon: Icons.local_hospital_outlined,
               title: "Hospitals",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HospitalListScreen()
+                  ),
+                );
+              },
             ),
             _menuItem(
               icon: Icons.favorite_outline,
               title: "Doctors",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                    builder: (context) => AllDoctorsScreen(category: "All")
+                ),
+                );
+              },
             ),
             _menuItem(
               icon: Icons.notifications_none,

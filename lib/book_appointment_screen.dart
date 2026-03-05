@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'AppointmentBookDailog.dart';
+
 class BookAppointmentScreen extends StatefulWidget {
   const BookAppointmentScreen({super.key});
 
@@ -9,9 +11,9 @@ class BookAppointmentScreen extends StatefulWidget {
 }
 
 class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
-  final int year = 2026;
-  int currentMonth = 1; // January
-  int selectedDate = 1;
+  final int year = DateTime.now().year;
+  int currentMonth = DateTime.now().month;
+  int selectedDate = DateTime.now().day+1;
   String selectedTime = "10.00 AM";
 
   List<int> get dates {
@@ -108,7 +110,9 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
-                    onPressed: _previousMonth,
+                    onPressed :
+                      _previousMonth
+
                   ),
                   IconButton(
                     icon: const Icon(Icons.chevron_right),
@@ -183,10 +187,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   // 🔹 Month Controls
   void _previousMonth() {
     setState(() {
-      if (currentMonth > 1) {
+
+      if (currentMonth > DateTime.now().month) {
         currentMonth--;
-        selectedDate = 1;
+        selectedDate = DateTime.now().day;
       }
+
     });
   }
 
@@ -258,7 +264,11 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           final monthName = DateFormat.MMMM().format(
             DateTime(year, currentMonth),
           );
-
+          showDialog(
+            context: context,
+            builder: (context) => Appointmentbookdailog(name: "",month: monthName,date: selectedDate.toString(),year: year.toString() , time: selectedTime,),
+          );
+          /*
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -266,8 +276,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
               ),
             ),
           );
+          Navigator.pop(context);
+          */
         },
-        child: const Text("Confirm"),
+        child: const Text("Confirm" , style: TextStyle(color: Colors.white),),
       ),
     );
   }

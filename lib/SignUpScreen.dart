@@ -2,6 +2,8 @@ import 'package:doctor_appointment/HomeScreen.dart';
 import 'package:doctor_appointment/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
+import 'Firebase/FirestoreService.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -16,6 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController nicknameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   String? selectedGender;
 
@@ -42,13 +45,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  void _createAccount() {
+
+  void _createAccount() async{
     if (_formKey.currentState!.validate()) {
       debugPrint("Name: ${nameController.text}");
       debugPrint("Nickname: ${nicknameController.text}");
       debugPrint("Email: ${emailController.text}");
       debugPrint("DOB: ${dobController.text}");
       debugPrint("Gender: $selectedGender");
+
+      String username = emailController.text.trim();
+      String password = passwordController.text.trim();
+
+      await FirestoreService().addUser(username, password);
+
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Account Created Successfully")),
