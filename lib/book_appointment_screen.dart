@@ -1,10 +1,21 @@
+import 'package:doctor_appointment/Models/AppointmentModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'AppointmentBookDailog.dart';
+import 'Firebase/FirestoreService.dart';
+import 'Firebase/localPresistence.dart';
+import 'Models/DoctorModel.dart';
 
 class BookAppointmentScreen extends StatefulWidget {
-  const BookAppointmentScreen({super.key});
+  final Doctor doctor;
+
+  const BookAppointmentScreen({
+    super.key,
+    required this.doctor,
+  });
+
+  //const BookAppointmentScreen({super.key});
 
   @override
   State<BookAppointmentScreen> createState() => _BookAppointmentScreenState();
@@ -19,6 +30,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   List<int> get dates {
     final daysInMonth = DateUtils.getDaysInMonth(year, currentMonth);
     return List.generate(daysInMonth, (index) => index + 1);
+  }
+
+  void addAppointment(AppointmentModel model) async {
+    print("Appointment = ");
+    print(model);
+    await FirestoreService().addAppointment(model);
   }
 
   final List<String> times = [
@@ -260,7 +277,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {
+        onPressed: () async {
           final monthName = DateFormat.MMMM().format(
             DateTime(year, currentMonth),
           );
@@ -268,6 +285,8 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
             context: context,
             builder: (context) => Appointmentbookdailog(name: "",month: monthName,date: selectedDate.toString(),year: year.toString() , time: selectedTime,),
           );
+          Future<String?> username = LocalPersistence.get("username");
+          addAppointment(AppointmentModel(Uname: await username ,Dname: widget.doctor.name , month: monthName ,year: year.toString(),date: selectedDate.toString() ,time: selectedTime ,doctor: widget.doctor));
           /*
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

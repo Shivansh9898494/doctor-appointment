@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:doctor_appointment/AppLogo.dart';
 import 'package:doctor_appointment/welcomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'Firebase/localPresistence.dart';
 import 'HomeScreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,11 +40,8 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // Navigate to Home after animation
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) =>  welcomeScreen()),
-      );
+    Timer(const Duration(seconds: 2), () {
+      check();
     });
   }
 
@@ -52,6 +50,25 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.dispose();
     super.dispose();
   }
+
+  void check() async{
+    String? status = await LocalPersistence.get("login");
+
+    //if (!mounted) return;
+
+    if ( status == "true"){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) =>  HomeScreen()),
+      );
+    }else{
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) =>  welcomeScreen()),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

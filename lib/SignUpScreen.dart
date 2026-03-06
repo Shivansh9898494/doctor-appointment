@@ -15,17 +15,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController nicknameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   String? selectedGender;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
     nameController.dispose();
-    nicknameController.dispose();
+    passwordController.dispose();
     emailController.dispose();
     dobController.dispose();
     super.dispose();
@@ -49,7 +49,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _createAccount() async{
     if (_formKey.currentState!.validate()) {
       debugPrint("Name: ${nameController.text}");
-      debugPrint("Nickname: ${nicknameController.text}");
+      debugPrint("Nickname: ${passwordController.text}");
       debugPrint("Email: ${emailController.text}");
       debugPrint("DOB: ${dobController.text}");
       debugPrint("Gender: $selectedGender");
@@ -125,11 +125,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   const SizedBox(height: 16),
 
-                  _inputField(
-                    hint: "Nickname",
-                    icon: Icons.alternate_email,
-                    controller: nicknameController,
+                 /* _inputField(
+                    hint: "Password",
+                    icon: Icons.lock,
+                    controller: passwordController,
+                  ),*/
+
+
+              TextFormField(
+              controller: passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: _obscurePassword,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+                decoration: InputDecoration(
+                  hintText: "Password",
+                  prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xff1E2A3A)),
+                  ),
+
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+
+            ),
 
                   const SizedBox(height: 16),
 

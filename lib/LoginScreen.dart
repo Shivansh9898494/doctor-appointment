@@ -4,6 +4,7 @@ import 'package:doctor_appointment/SignUpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Firebase/FirestoreService.dart';
+import 'Firebase/localPresistence.dart';
 import 'Models/UserModel.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,10 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {});
   }
 
-  Future<void> save(String key , String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
+
 
   void loginUser() async {
 
@@ -58,9 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString("username", email);
 
-        save("login", "true");
-        save("username", user.username.toString());
-        save("password", user.password.toString());
+        LocalPersistence.save("login", "true");
+        LocalPersistence.save("username", user.username.toString());
+        LocalPersistence.save("password", user.password.toString());
 
         Navigator.pushReplacement(
           context,
