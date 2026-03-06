@@ -1,3 +1,5 @@
+import 'package:doctor_appointment/HomeScreen.dart';
+import 'package:doctor_appointment/book_appointment_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'Models/DoctorModel.dart';
@@ -162,11 +164,21 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Text(
+
+        Text(d.about,
+          /*isExpanded || d.about.length <= 90
+              ? d.about
+              : "${d.about.substring(0, 90)}...",*/
+          style: const TextStyle(color: Colors.grey, height: 1.5),
+        ),
+
+        /*Text(
           isExpanded ? d.about : "${d.about.substring(0, 90)}...",
           style: const TextStyle(color: Colors.grey, height: 1.5),
         ),
+        */
         const SizedBox(height: 6),
+        /*
         GestureDetector(
           onTap: () => setState(() => isExpanded = !isExpanded),
           child: Text(
@@ -175,6 +187,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                 color: Colors.blue, fontWeight: FontWeight.w600),
           ),
         ),
+        */
       ],
     );
   }
@@ -268,7 +281,12 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => BookAppointmentScreen(doctor: widget.doctor),
+              ),
+          );
+        },
         child: const Text(
           "Book Appointment",
           style: TextStyle(color: Colors.white, fontSize: 16),

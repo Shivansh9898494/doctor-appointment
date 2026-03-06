@@ -74,10 +74,7 @@ class HospitalListScreen extends StatelessWidget {
             Navigator.pop(context);
           },*/
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) =>  HomeScreen()),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(
             Icons.arrow_back,

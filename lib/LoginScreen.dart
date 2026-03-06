@@ -2,6 +2,10 @@ import 'package:doctor_appointment/ForgetPassScreen.dart';
 import 'package:doctor_appointment/HomeScreen.dart';
 import 'package:doctor_appointment/SignUpScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'Firebase/FirestoreService.dart';
+import 'Firebase/localPresistence.dart';
+import 'Models/UserModel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +19,62 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  List<UserModel> users = [];
+
+  @override
+  void initState() {
+    print("Helo Users Init State");
+    super.initState();
+    loadUsers();
+  }
+
+  void loadUsers() async {
+    print("Helo Users Load users");
+    users = await FirestoreService().fetchUsers();
+    for (var u in users) {
+      print("Users");
+      print(u.username);
+      print(u.password);
+    }
+    setState(() {});
+  }
+
+
+
+  void loginUser() async {
+
+    String email = emailController.text.trim();
+    String pass = passwordController.text.trim();
+
+    bool isUserFound = false;
+
+    for (var user in users) {
+      if (user.username == email && user.password == pass) {
+        isUserFound = true;
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("username", email);
+
+        LocalPersistence.save("login", "true");
+        LocalPersistence.save("username", user.username.toString());
+        LocalPersistence.save("password", user.password.toString());
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen()),
+        );
+        break;
+      }
+    }
+
+    if (!isUserFound) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid username or password")),
+      );
+    }
+  }
+
 
   @override
   void dispose() {
@@ -106,11 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           debugPrint("Email: ${emailController.text}");
                           debugPrint("Password: ${passwordController.text}");
 
+                          if (_formKey.currentState!.validate()) {
+                            loginUser();
+                          }
                           //Navigation
-                          Navigator.pushReplacement(
+                          /*Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (_) =>  HomeScreen()),
-                          );
+                          );*/
                         }
                       },
                       child: const Text(
@@ -307,4 +370,10 @@ class AppLogo extends StatelessWidget {
       ),
     );
   }
+
+
+
+
+
+
 }

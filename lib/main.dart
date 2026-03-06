@@ -1,13 +1,22 @@
+import 'package:doctor_appointment/HomeScreen.dart';
 import 'package:doctor_appointment/Notification.dart';
 import 'package:doctor_appointment/ProfileScreen.dart';
 import 'package:doctor_appointment/doctor_details_screen.dart';
 import 'package:doctor_appointment/splashScreen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'AppSideMenu.dart';
+import 'AppointmentBookDailog.dart';
 import 'book_appointment_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -26,6 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
       home: SplashScreen(),
+      //home: HomeScreen(),
     );
   }
 }

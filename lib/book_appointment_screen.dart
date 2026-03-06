@@ -1,22 +1,41 @@
+import 'package:doctor_appointment/Models/AppointmentModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'AppointmentBookDailog.dart';
+import 'Firebase/FirestoreService.dart';
+import 'Firebase/localPresistence.dart';
+import 'Models/DoctorModel.dart';
+
 class BookAppointmentScreen extends StatefulWidget {
-  const BookAppointmentScreen({super.key});
+  final Doctor doctor;
+
+  const BookAppointmentScreen({
+    super.key,
+    required this.doctor,
+  });
+
+  //const BookAppointmentScreen({super.key});
 
   @override
   State<BookAppointmentScreen> createState() => _BookAppointmentScreenState();
 }
 
 class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
-  final int year = 2026;
-  int currentMonth = 1; // January
-  int selectedDate = 1;
+  final int year = DateTime.now().year;
+  int currentMonth = DateTime.now().month;
+  int selectedDate = DateTime.now().day+1;
   String selectedTime = "10.00 AM";
 
   List<int> get dates {
     final daysInMonth = DateUtils.getDaysInMonth(year, currentMonth);
     return List.generate(daysInMonth, (index) => index + 1);
+  }
+
+  void addAppointment(AppointmentModel model) async {
+    print("Appointment = ");
+    print(model);
+    await FirestoreService().addAppointment(model);
   }
 
   final List<String> times = [
@@ -108,7 +127,9 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
-                    onPressed: _previousMonth,
+                    onPressed :
+                      _previousMonth
+
                   ),
                   IconButton(
                     icon: const Icon(Icons.chevron_right),
@@ -183,10 +204,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   // 🔹 Month Controls
   void _previousMonth() {
     setState(() {
-      if (currentMonth > 1) {
+
+      if (currentMonth > DateTime.now().month) {
         currentMonth--;
-        selectedDate = 1;
+        selectedDate = DateTime.now().day;
       }
+
     });
   }
 
@@ -254,11 +277,17 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {
+        onPressed: () async {
           final monthName = DateFormat.MMMM().format(
             DateTime(year, currentMonth),
           );
-
+          showDialog(
+            context: context,
+            builder: (context) => Appointmentbookdailog(name: "",month: monthName,date: selectedDate.toString(),year: year.toString() , time: selectedTime,),
+          );
+          Future<String?> username = LocalPersistence.get("username");
+          addAppointment(AppointmentModel(Uname: await username ,Dname: widget.doctor.name , month: monthName ,year: year.toString(),date: selectedDate.toString() ,time: selectedTime ,doctor: widget.doctor));
+          /*
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -266,8 +295,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
               ),
             ),
           );
+          Navigator.pop(context);
+          */
         },
-        child: const Text("Confirm"),
+        child: const Text("Confirm" , style: TextStyle(color: Colors.white),),
       ),
     );
   }
