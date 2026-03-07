@@ -1,7 +1,10 @@
 import 'package:doctor_appointment/AllDoctorScreen.dart';
 import 'package:doctor_appointment/AllHospitalScreen.dart';
 import 'package:doctor_appointment/AppSideMenu.dart';
+import 'package:doctor_appointment/HospitalDetailScreen.dart' show HospitalDetailsScreen;
 import 'package:flutter/material.dart';
+
+import 'Models/HospitalModel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -392,41 +395,114 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
+  final List<HospitalModel> hospitals = [
+  HospitalModel(
+  name: "Sunrise Health Clinic",
+  address: "123 Oak Street, Los Angeles, CA",
+  rating: 5.0,
+  reviews: 128,
+  distance: "2.5 km • 40 min",
+  type: "Clinic",
+  image: "assets/images/hospital1.png",
+  phone: "+1 234 567 890",
+  email: "info@sunriseclinic.com",
+  website: "www.sunriseclinic.com",
+  description: "A modern clinic providing high quality healthcare services.",
+  workingHours: "Mon - Sun | 8:00 AM - 10:00 PM",
+  doctorsCount: 25,
+  patientsCount: 2000,
+  departments: ["Cardiology", "Dermatology", "Orthopedics"],
+  facilities: ["Emergency", "Pharmacy", "Laboratory", "Parking"],
+  latitude: 34.0522,
+  longitude: -118.2437,
+  ),
+
+  HospitalModel(
+  name: "Golden Cardiology Center",
+  address: "555 Bridge Street, San Francisco, CA",
+  rating: 4.9,
+  reviews: 58,
+  distance: "1.8 km • 25 min",
+  type: "Specialty Hospital",
+  image: "assets/images/hospital2.png",
+  phone: "+1 987 654 321",
+  email: "contact@goldencardiology.com",
+  website: "www.goldencardiology.com",
+  description: "Specialized hospital focused on heart related treatments.",
+  workingHours: "Mon - Sat | 9:00 AM - 8:00 PM",
+  doctorsCount: 18,
+  patientsCount: 1500,
+  departments: ["Cardiology", "Heart Surgery"],
+  facilities: ["Emergency", "Ambulance", "ICU"],
+  latitude: 37.7749,
+  longitude: -122.4194,
+  ),
+
+  HospitalModel(
+  name: "City Care Medical Center",
+  address: "789 Main Road, New York, NY",
+  rating: 4.8,
+  reviews: 214,
+  distance: "3.1 km • 45 min",
+  type: "Hospital",
+  image: "assets/images/hospital3.png",
+  phone: "+1 111 222 333",
+  email: "info@citycare.com",
+  website: "www.citycare.com",
+  description: "Large multi-specialty medical center with advanced facilities.",
+  workingHours: "24 Hours",
+  doctorsCount: 60,
+  patientsCount: 5000,
+  departments: ["Cardiology", "Neurology", "Orthopedics", "Pediatrics"],
+  facilities: ["Emergency", "Pharmacy", "Radiology", "Ambulance"],
+  latitude: 40.7128,
+  longitude: -74.0060,
+  ),
+
+  HospitalModel(
+  name: "Green Valley Hospital",
+  address: "45 Green Valley Ave, Denver, CO",
+  rating: 4.7,
+  reviews: 176,
+  distance: "4.0 km • 50 min",
+  type: "Hospital",
+  image: "assets/images/hospital4.png",
+  phone: "+1 444 555 666",
+  email: "support@greenvalley.com",
+  website: "www.greenvalley.com",
+  description: "Community hospital offering affordable healthcare services.",
+  workingHours: "24 Hours",
+  doctorsCount: 40,
+  patientsCount: 3200,
+  departments: ["General Medicine", "Orthopedics", "ENT"],
+  facilities: ["Emergency", "Laboratory", "Parking"],
+  latitude: 39.7392,
+  longitude: -104.9903,
+  ),
+  ];
 
 
   // 🔹 Medical Centers
   Widget _medicalCenters() {
     return SizedBox(
       height: 170,
-      child: ListView(
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        children: [
-          _medicalCard(
-            "Sunrise Health Clinic",
-            "assets/images/hospital1.png",
-          ),
-          _medicalCard(
-            "Golden Cardiology Center",
-            "assets/images/hospital2.png",
-          ),
-          _medicalCard(
-            "City Care Medical Center",
-            "assets/images/hospital3.png",
-          ),
-          _medicalCard(
-            "Green Valley Medical",
-            "assets/images/hospital4.png",
-          ),
-          _medicalCard(
-            "Hopewell Medical Clinic",
-            "assets/images/hospital5.png",
-          ),
-          _medicalCard(
-            "Northside Children’s Hospital",
-            "assets/images/hospital6.png",
-          )
-        ],
-
+        itemCount: hospitals.length,
+        itemBuilder: (_, index){
+          //return _medicalCard(hospitals[index].name, hospitals[index].image);
+          return InkWell(
+            onTap: (){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context)=> HospitalDetailsScreen(hospital: hospitals[index],),
+                  ),
+              );
+            },
+            child: _medicalCard(hospitals[index].name, hospitals[index].image),
+          );
+        },
       ),
     );
   }

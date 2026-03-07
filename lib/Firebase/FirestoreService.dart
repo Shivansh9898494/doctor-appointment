@@ -6,21 +6,18 @@ class FirestoreService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// 🔹 Fetch Users
   Future<List<UserModel>> fetchUsers() async {
 
     try {
 
       QuerySnapshot snapshot =
-      await _firestore.collection('userid').get();
-
-      print("Total docs: ${snapshot.docs.length}");
+      await _firestore.collection('users').get();
 
       List<UserModel> users = snapshot.docs.map((doc) {
 
         Map<String, dynamic> data =
         doc.data() as Map<String, dynamic>;
-
-        print("Doc Data: $data");
 
         return UserModel.fromMap(data);
 
@@ -36,12 +33,13 @@ class FirestoreService {
     }
   }
 
-  // 🔹 Add new user
-  Future<void> addUser(String username, String password) async {
-    await _firestore.collection('userid').add({
-      "username": username,
-      "password": password,
-    });
+  /// 🔹 Add User
+  Future<void> addUser(UserModel user) async {
+
+    await _firestore.collection('users').add(
+      user.toMap(),
+    );
+
   }
 
 
@@ -75,6 +73,7 @@ class FirestoreService {
   }
 
   Future<void> addAppointment(AppointmentModel detail) async {
+
     await _firestore.collection('appointment').add({
       "Uname": detail.Uname,
       "Dname": detail.Dname,

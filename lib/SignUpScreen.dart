@@ -1,8 +1,10 @@
 import 'package:doctor_appointment/HomeScreen.dart';
 import 'package:doctor_appointment/LoginScreen.dart';
+import 'package:doctor_appointment/Models/UserModel.dart';
 import 'package:flutter/material.dart';
 
 import 'Firebase/FirestoreService.dart';
+import 'Firebase/localPresistence.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,6 +20,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool _isLoading = false;
 
   String? selectedGender;
   bool _obscurePassword = true;
@@ -45,30 +49,88 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-
-  void _createAccount() async{
+  void _createAccount() async {
     if (_formKey.currentState!.validate()) {
-      debugPrint("Name: ${nameController.text}");
-      debugPrint("Nickname: ${passwordController.text}");
-      debugPrint("Email: ${emailController.text}");
-      debugPrint("DOB: ${dobController.text}");
-      debugPrint("Gender: $selectedGender");
 
-      String username = emailController.text.trim();
-      String password = passwordController.text.trim();
+      setState(() {
+        _isLoading = true;
+      });
 
-      await FirestoreService().addUser(username, password);
+      try {
 
+        String username = nameController.text.trim();
+        String password = passwordController.text.trim();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Account Created Successfully")),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) =>  HomeScreen()),
-      );
+        await LocalPersistence.save("login", "true");
+
+        await LocalPersistence.saveUser(
+          username,
+          emailController.text,
+          password,
+          dobController.text,
+          selectedGender.toString(),
+        );
+
+        await FirestoreService().addUser(
+          UserModel(
+            username: username,
+            email: emailController.text,
+            password: password,
+            dateOfBirth: dobController.text,
+            gender: selectedGender.toString(),
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Account Created Successfully")),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen()),
+        );
+
+      } catch (e) {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+
+      } finally {
+
+        setState(() {
+          _isLoading = false;
+        });
+
+      }
     }
   }
+
+  // void _createAccount() async{
+  //   if (_formKey.currentState!.validate()) {
+  //     debugPrint("Name: ${nameController.text}");
+  //     debugPrint("Nickname: ${passwordController.text}");
+  //     debugPrint("Email: ${emailController.text}");
+  //     debugPrint("DOB: ${dobController.text}");
+  //     debugPrint("Gender: $selectedGender");
+  //
+  //     String username = emailController.text.trim();
+  //     String password = passwordController.text.trim();
+  //
+  //     LocalPersistence.save("login", "true");
+  //     LocalPersistence.saveUser(username, emailController.text,  password, dobController.text, selectedGender.toString());
+  //
+  //     await FirestoreService().addUser(UserModel(username: username, email: emailController.text, password: password, dateOfBirth: dobController.text, gender: selectedGender.toString()));
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Account Created Successfully")),
+  //     );
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (_) =>  HomeScreen()),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -203,12 +265,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       onPressed: _createAccount,
-                      child: const Text(
-                        "Create Account",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff1E2A3A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(26),
+                            ),
+                          ),
+                          onPressed: _isLoading ? null : _createAccount,
+                          child: _isLoading
+                              ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                              : const Text(
+                            "Create Account",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
