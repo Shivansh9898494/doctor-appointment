@@ -53,10 +53,17 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user.email == email && user.password == pass) {
         isUserFound = true;
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("username", email);
+        //final prefs = await SharedPreferences.getInstance();
+        //await prefs.setString("username", email);
+        ///Issue
+        print("Username = "+ user.username);
+        print("Email = "+ user.email);
+        print("Password = "+ user.password);
+        print("Date of Birth = "+ user.dateOfBirth);
+        print("Gender = "+ user.gender);
 
         LocalPersistence.save("login", "true");
+
         LocalPersistence.saveUser(
           user.username,
           user.email,
